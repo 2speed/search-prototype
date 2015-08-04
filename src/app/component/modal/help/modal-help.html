@@ -1,0 +1,51 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()">
+        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+    </button>
+    <h4 class="modal-title" id="myModalLabel">Help</h4>
+</div>
+<div class="modal-body">
+    <h4><span class="glyphicon glyphicon-search"></span> <strong>Search</strong></h4>
+    <p>To perform a search, simply enter a search term in the search field:</p>
+    <br>
+    <div class="input-group input-group-sm">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <input type="search" class="form-control" placeholder="Enter search term...">
+    </div>
+    <br>
+    <p>and click the <button class="btn btn-default" type="button">Search</button> button. 
+    Search results will be displayed in the table below the search field.</p>
+    <br>
+    <h5><strong>Search Syntax</strong></h5>
+    <p>Search text is parsed into a series of terms and operators. A term can be a single word 
+    <code>tcga</code>, or a phrase enclosed with double quotes <code>"tcga dcc"</code> to search 
+    for all the words in the phrase in the same order.</p>
+
+    <p>Additional search syntax (wildcard, fuzzy, range, etc.) can be found here: 
+    <a href="https://lucene.apache.org/core/2_9_4/queryparsersyntax.html" target="_blank">
+    <em><strong>Apache Lucene Query Syntax</strong></em></a>.</p>
+    <br>
+    <h4><span class="glyphicon glyphicon-cog"></span> <strong>Typeahead/Auto-complete</strong></h4>
+    <p>As search terms are entered into the search field, similar terms may be suggested that 
+    can be used to complete the search text. Suggested terms are retrieved directly from the 
+    search index in <em>real-time</em> and are based on specific field values for a document type.</p>
+    <br>
+    <h5><strong>MAF</strong></h5>
+    <ul>
+        <li>Hugo_Symbol</li>
+        <li>Tumor_Sample_Barcode</li>
+    </ul>
+    <h5><strong>XML</strong></h5>
+    <ul>
+        <li>disease_code</li>
+        <li>bcr_patient_barcode</li>
+    </ul>
+    <br>
+    <p>To ignore suggested terms and enter further search terms press the escape <code>Esc</code> key.</p>
+    <br>
+    <h4><span class="glyphicon glyphicon-transfer"></span> <strong>JSON Output</strong></h4>
+    <p>The raw JSON output for each search request will provided in the panel labeled Raw JSON Response.</p>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" ng-click="cancel()">Close</button>
+</div>

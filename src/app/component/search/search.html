@@ -1,0 +1,79 @@
+<div class="page page-table">
+    <section class="panel panel-default table-dynamic">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-4">
+                    <form class="form-horizontal" role="form" method="get" action="#">
+                        <div class="form-group">
+                            <label for="keywordField" class="col-sm-2 control-label">Keyword(s)</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                    <input type="search"
+                                           class="form-control"
+                                           ng-model="search.searchText"
+                                           on-key-enter="search.search()"
+                                           placeholder="Enter search term..."
+                                           typeahead="suggestion for suggestion in search.suggest($viewValue)"
+                                           typeahead-wait-ms="500"
+                                           autofocus>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="diseaseFilter" class="col-sm-2 control-label">Disease</label>
+                            <div class="col-sm-10">
+                                <select class="form-control"
+                                        ng-model="search.option.filter.disease.value"
+                                        ng-options="d for d in search.selection.disease">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="diseaseFilter" class="col-sm-2 control-label">Gender</label>
+                            <div class="col-sm-10">
+                                <select class="form-control"
+                                        ng-model="search.option.filter.gender.value"
+                                        ng-options="g for g in search.selection.gender">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="raceFilter" class="col-sm-2 control-label">Race</label>
+                            <div class="col-sm-10">
+                                <select class="form-control"
+                                        ng-model="search.option.filter.race.value"
+                                        ng-options="r for r in search.selection.race">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="searchFilter1" class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <button class="btn btn-default" type="button" ng-click="search.search()">Search</button>
+                                <button class="btn btn-default" type="button" ng-click="search.reset()">Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="gridStyle"
+             ui-grid="search.option.grid.xml"
+             ui-grid-edit
+             ui-grid-pagination
+             ui-grid-selection
+             ui-grid-resize-columns>
+         </div>
+    </section>
+    <section>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-transfer"></span> Raw JSON Data</h3>
+            </div>
+            <div class="panel-body" style="height:300px; overflow:auto">
+                <pre>{{search.results.xml.documents | json}}</pre>
+            </div>
+        </div>
+    </section>
+</div>

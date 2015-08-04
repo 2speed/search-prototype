@@ -1,0 +1,331 @@
+/**
+ *  If you want to override some bootstrap variables, you have to change values here.
+ *  The list of variables are listed here bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_variables.scss
+ */
+
+$navbar-inverse-link-color: #5AADBB;
+$icon-font-path: "../../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+
+// bower:scss
+// endbower
+
+body {
+    padding-top: 20px;
+    padding-bottom: 20px
+}
+
+.footer,
+.header,
+.marketing {
+    padding-left: 15px;
+    padding-right: 15px
+}
+
+.header {
+    border-bottom: 1px solid #e5e5e5
+}
+
+.header h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 40px;
+    padding-bottom: 19px
+}
+
+.footer {
+    padding-top: 19px;
+    color: #777;
+    border-top: 1px solid #e5e5e5
+}
+
+.container-narrow>hr {
+    margin: 30px 0
+}
+
+.jumbotron {
+    text-align: center;
+    border-bottom: 1px solid #e5e5e5
+}
+
+.jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px
+}
+
+.marketing {
+    margin: 40px 0
+}
+
+.marketing p+h4 {
+    margin-top: 28px
+}
+
+.main-nav {
+    margin: 30px
+}
+
+p {
+    font-size: 1em
+}
+
+.carousel,
+.nav,
+.pagination,
+.panel-title a {
+    cursor: pointer
+}
+
+.navbar-custom {
+    background-color: #4d5b76;
+    border-color: #404c62;
+    background-image: linear-gradient(to bottom, #617395 0, #4d5b76 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff617395', endColorstr='#ff4d5b76', GradientType=0);
+}
+
+.navbar-custom .navbar-brand {
+    color: #fff
+}
+
+.navbar-custom .navbar-brand:focus,
+.navbar-custom .navbar-brand:hover {
+    color: #e6e6e6;
+    background-color: transparent
+}
+
+.navbar-custom .navbar-nav>li>a,
+.navbar-custom .navbar-text {
+    color: #fff
+}
+
+.navbar-custom .navbar-nav>li>a:focus,
+.navbar-custom .navbar-nav>li>a:hover {
+    color: #92a3c2;
+    background-color: transparent
+}
+
+.navbar-custom .navbar-nav>.active>a,
+.navbar-custom .navbar-nav>.active>a:focus,
+.navbar-custom .navbar-nav>.active>a:hover {
+    color: #92a3c2;
+    background-color: #404c62;
+    background-image: linear-gradient(to bottom, #404c62 0, #546381 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff404c62', endColorstr='#ff546381', GradientType=0);
+}
+
+.navbar-custom .navbar-nav>.disabled>a,
+.navbar-custom .navbar-nav>.disabled>a:focus,
+.navbar-custom .navbar-nav>.disabled>a:hover {
+    color: #ccc;
+    background-color: transparent
+}
+
+.navbar-custom .navbar-toggle {
+    border-color: #ddd
+}
+
+.navbar-custom .navbar-toggle:focus,
+.navbar-custom .navbar-toggle:hover {
+    background-color: #ddd
+}
+
+.navbar-custom .navbar-toggle .icon-bar {
+    background-color: #ccc
+}
+
+.navbar-custom .navbar-collapse,
+.navbar-custom .navbar-form {
+    border-color: #3f4a60
+}
+
+.navbar-custom .navbar-nav>.dropdown>a:focus .caret,
+.navbar-custom .navbar-nav>.dropdown>a:hover .caret {
+    border-top-color: #92a3c2;
+    border-bottom-color: #92a3c2
+}
+
+.navbar-custom .navbar-nav>.open>a,
+.navbar-custom .navbar-nav>.open>a:focus,
+.navbar-custom .navbar-nav>.open>a:hover {
+    background-color: #404c62;
+    color: #92a3c2
+}
+
+.navbar-custom .navbar-nav>.open>a .caret,
+.navbar-custom .navbar-nav>.open>a:focus .caret,
+.navbar-custom .navbar-nav>.open>a:hover .caret {
+    border-top-color: #92a3c2;
+    border-bottom-color: #92a3c2
+}
+
+.navbar-custom .navbar-nav>.dropdown>a .caret {
+    border-top-color: #fff;
+    border-bottom-color: #fff
+}
+
+.navbar-custom .navbar-link {
+    color: #fff
+}
+
+.navbar-custom .navbar-link:hover {
+    color: #92a3c2
+}
+
+.panel {
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 3px
+}
+
+.dialog .panel {
+    box-shadow: 1px 1px 0 #fff
+}
+
+.panel .panel-heading {
+    border-bottom: 1px solid #ccc;
+    border-left: none;
+    color: #333;
+    display: block;
+    margin-bottom: 0;
+    text-shadow: none;
+    text-transform: none;
+    font-size: .85em;
+    line-height: 1.5em;
+    background: #efefef;
+    -webkit-filter: progid:dximagetransform.microsoft.gradient(startColorStr='#e3e3e3', EndColorStr='#ffffff');
+    filter: progid:dximagetransform.microsoft.gradient(startColorStr='#e3e3e3', EndColorStr='#ffffff');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fafafa',EndColorStr='#efefef')";
+    box-shadow: inset 0 1px 1px #fff
+}
+
+.panel .panel-heading:not(.no-collapse):hover {
+    background: #efefef;
+    -webkit-filter: progid:dximagetransform.microsoft.gradient(startColorStr='#e3e3e3', EndColorStr='#ffffff');
+    filter: progid:dximagetransform.microsoft.gradient(startColorStr='#e3e3e3', EndColorStr='#ffffff');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fafafa',EndColorStr='#e2e2e2')";
+}
+
+.panel .panel-heading .panel-icon {
+    border-right: 1px solid #AAA;
+    box-shadow: 1px 0 1px #fff;
+    border-left: none;
+    text-align: center;
+    padding-left: 1em;
+    line-height: 2em;
+    margin-top: -.25em
+}
+
+.panel .panel-heading .panel-icon a {
+    padding: 0
+}
+
+.panel .panel-heading .panel-icon [class*=icon-] {
+    padding: 0 1em;
+    line-height: 1em
+}
+
+.panel .panel-heading .panel-icon.pull-right {
+    border-left: 1px solid #AAA;
+    border-right: none;
+    box-shadow: inset 1px 0 1px #fff
+}
+
+.panel .panel-heading .label {
+    float: right;
+    line-height: 1.5em;
+    box-shadow: 1px 1px 0 #fff
+}
+
+.panel-heading a,
+a.panel-heading,
+p.panel-heading {
+    color: #505050;
+    display: block;
+    outline: 0
+}
+
+.panel-heading a:hover,
+a.panel-heading:hover {
+    color: #505050
+}
+
+.panel-body {
+    min-height: .25em
+}
+
+.panel-body h1,
+.panel-body h2,
+.panel-body h3,
+.panel-body h4,
+.panel-body h5,
+.panel-body h6,
+.panel-body table {
+    margin-top: 12px
+}
+
+.panel-body.collapse {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+@media (min-width:768px) {
+    .container {
+        max-width: 730px
+    }
+}
+
+@media screen and (min-width:768px) {
+    .footer,
+    .header,
+    .marketing {
+        padding-left: 0;
+        padding-right: 0
+    }
+    .header {
+        margin-bottom: 30px
+    }
+    .jumbotron {
+        border-bottom: 0
+    }
+}
+
+@media (max-width:767) {
+    .navbar-custom .navbar-nav .open .dropdown-menu>li>a {
+        color: #fff
+    }
+    .navbar-custom .navbar-nav .open .dropdown-menu>li>a:focus,
+    .navbar-custom .navbar-nav .open .dropdown-menu>li>a:hover {
+        color: #92a3c2;
+        background-color: transparent
+    }
+    .navbar-custom .navbar-nav .open .dropdown-menu>.active>a,
+    .navbar-custom .navbar-nav .open .dropdown-menu>.active>a:focus,
+    .navbar-custom .navbar-nav .open .dropdown-menu>.active>a:hover {
+        color: #92a3c2;
+        background-color: #404c62
+    }
+    .navbar-custom .navbar-nav .open .dropdown-menu>.disabled>a,
+    .navbar-custom .navbar-nav .open .dropdown-menu>.disabled>a:focus,
+    .navbar-custom .navbar-nav .open .dropdown-menu>.disabled>a:hover {
+        color: #ccc;
+        background-color: transparent
+    }
+}
+
+@media only screen and (min-width: 20em) {
+    .logo a:before {
+        display: block;
+        top: -0.2em;
+        left: -0.2em;
+        position: absolute;
+        width: 128px;
+        height: 80px;
+        content: "";
+        background: url(/images/logo.svg) no-repeat;
+        background-size: 100%;
+    }
+}
+
+// injector
+// endinjector
