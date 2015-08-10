@@ -18,11 +18,20 @@
         var searchViewModel = this;
 
         searchViewModel.selection    = SELECTION;
-        searchViewModel.isSearching  = false;
-        searchViewModel.noResults    = false;
         searchViewModel.resultsPage  = 0;
         searchViewModel.searchText   = '';
         searchViewModel.selectedItem = null;
+
+        // ====================
+        // Result state
+        // ====================
+        searchViewModel.results = {
+            searchText: '',
+            xml: {
+                documentCount: 0,
+                documents: []
+            }
+        };
 
         // ====================
         // Options
@@ -37,8 +46,8 @@
                 race: { name: 'patient.race.value.raw', value: '' }
             },
             pagination: {
-                pageSizes: [50, 100, 150, 250],
-                pageSize: 50,
+                pageSizes: [25, 50, 100, 200],
+                pageSize: 25,
                 currentPage: 1
             },
             sort: [{
@@ -51,93 +60,179 @@
         };
 
         // ====================
-        // Options : Grid
+        // Grid
         // ====================
-        searchViewModel.option.grid = {
+        searchViewModel.grid = {
             xml: {
+                data: searchViewModel.results.xml.documents,
                 columnDefs: [
-                    { name: 'UUID', field: '_source.patient.bcr_patient_uuid.value' },
-                    { name: 'Barcode', field: '_source.patient.bcr_patient_barcode.value' },
-                    { name: 'Age at Diagnosis', field: '_source.patient.age_at_initial_pathologic_diagnosis.value' },
-                    { name: 'Gender', field: '_source.patient.gender.value' },
-                    { name: 'Race', field: '_source.patient.race.value' },
-                    { name: 'Disease', field: '_source.archiveName.disease' },
-                    { name: 'Platform (Clinical)', field: '_source.archiveName.platform' },
-                    { name: 'Platform (Molecular)', field: 'platform_maf' }
+                    { name: 'UUID',                 field: 'patientUuid' },
+                    { name: 'Barcode',              field: 'patientBarcode' },
+                    { name: 'Age at Diagnosis',     field: 'ageAtDiagnosis' },
+                    { name: 'Gender',               field: 'gender' },
+                    { name: 'Race',                 field: 'race' },
+                    { name: 'Disease',              field: 'disease' },
+                    { name: 'Platform (Clinical)',  field: 'platformXml' },
+                    { name: 'Platform (Molecular)', field: 'platformMaf' }
                 ],
                 enableSorting: true,
                 paginationPageSizes: searchViewModel.option.pagination.pageSizes,
                 paginationPageSize: searchViewModel.option.pagination.pageSize,
                 showColumnFooter: true,
-                showGridFooter: true,
-            },
-            maf: {
-                columnDefs: [
-                    { name: 'Disease', field: '_source.archiveName.disease', width: 120 },
-                    { name: 'Gene', field: '_source.Hugo_Symbol', width: 120 },
-                    { name: 'Patient', field: '_source.barcode.patient', width: 120 },
-                    { name: 'Tumor Sample Barcode',field: '_source.Tumor_Sample_Barcode', width: 280 },
-                    { name: 'Start Position', field: '_source.Start_Position', width: 120 },
-                    { name: 'End Position', field: '_source.End_Position', width: 120 },
-                    { name: 'Mutation Status', field: '_source.Mutation_Status' },
-                    { name: 'Validation Status', field: '_source.Validation_Status' },
-                    { name: 'Reference Allele', field: '_source.Reference_Allele' },
-                    { name: 'Verification Status', field: '_source.Verification_Status' }
-                ],
-                enableSorting: true,
-                showColumnFooter: true
-            }
-        };
-
-        // ====================
-        // Result state
-        // ====================
-        searchViewModel.results = {
-            searchText: '',
-            xml: {
-                documentCount: 0,
-                documents: []
-            },
-            maf: {
-                documentCount: 0,
-                documents: []
+                showGridFooter: true
             }
         };
 
         searchViewModel.suggest = function(searchText) {
             return searchService
-                .suggest(INDEX_SOURCE.xml, searchText)
-                .then(function(options) {
-                    return options;
-                });
+                    .suggest(INDEX_SOURCE.xml, searchText)
+                    .then(function(options) {
+                        return options;
+                    });
         };
 
         searchViewModel.search = function() {
-            searchViewModel.results.searchText           = searchViewModel.searchText;
-            searchViewModel.results.xml.documentCount    = 0;
-            searchViewModel.results.xml.documents.length = 0;
-            searchViewModel.results.maf.documentCount    = 0;
-            searchViewModel.results.maf.documents.length = 0;
+            resetResults(searchViewModel.results.xml);
 
-            return fetchResults(INDEX_SOURCE.xml, searchViewModel.results.searchText);
+            searchViewModel.results.searchText = searchViewModel.searchText;
+
+            return fetchXmlWith(searchViewModel, INDEX_SOURCE.xml)
+                    .then(function(documents) {
+                        return fetchMafMetadataWith(documents, INDEX_SOURCE.maf);
+                    })
+                    .then(function(results) {
+                        var documents =
+                            results.map(function(result) {
+                                var document = result.document;
+
+                                if (result.metadata) {
+                                    document.platformMaf = result.metadata.archiveName.platform;
+                                }
+
+                                return document;
+                            });
+
+                        return updateResults(searchViewModel, documents);
+                    })
+                    .catch(function (error) {
+                        log.error(error);
+                    });
         };
 
         searchViewModel.reset = function() {
-            var optionFilter = searchViewModel.option.filter;
-
-            Lazy(Object.keys(optionFilter))
-                .each(function(filter) {
-                    optionFilter[filter].value = '';
-                });
+            resetFilters(searchViewModel);
 
             searchViewModel.search();
+        };
+
+        function resetFilters(viewModel) {
+            var viewModelFilters = viewModel.option.filter;
+
+            Lazy(Object.keys(viewModelFilters))
+                .each(function(filter) {
+                    viewModelFilters[filter].value = '';
+                });
+        }
+
+
+        function resetResults(viewModelResults) {
+            viewModelResults.documentCount    = 0;
+            viewModelResults.documents.length = 0;
+        }
+
+        function fetchXmlWith(viewModel, indexSource) {
+            var criteria = {
+                indexSource: indexSource,
+                searchTerms: viewModel.searchText,
+                filters:     filtersOf(viewModel, indexSource),
+                pagination:  viewModel.option.pagination
+            };
+
+            return searchService
+                    .search(criteria)
+                    .then(parseXmlDocuments);
+        }
+
+        function parseXmlDocuments(searchResults) {
+            var documents = [];
+
+            if (searchResults && searchResults.hits.hits.length > 0) {
+                searchResults.hits.hits.forEach(function (result) {
+                    var source   = result._source;
+                    var document = {
+                        patientUuid:    valueOf(source.patient.bcr_patient_uuid),
+                        patientBarcode: valueOf(source.patient.bcr_patient_barcode),
+                        ageAtDiagnosis: valueOf(source.patient.age_at_initial_pathologic_diagnosis),
+                        gender:         valueOf(source.patient.gender),
+                        race:           valueOf(source.patient.race),
+                        disease:        source.archiveName.disease,
+                        platformXml:    source.archiveName.platform
+                    };
+
+                    documents.push(document);
+                });
+            }
+
+            function valueOf(field) {
+                if (typeof field !== 'undefined') {
+                    return field.value;
+                }
+
+                return undefined;
+            }
+
+            return documents;
+        }
+
+        function updateResults(viewModel, documents) {
+            // Set view model scope state
+            viewModel.results.xml.documentCount = documents.length;
+            viewModel.results.xml.documents     = documents;
+            viewModel.grid.xml.data             = documents;
+
+            // Update chart and pagination data
+            // updateChartData(result.aggregations.values.buckets);
+            updatePagination(documents);
+
+            return documents;
+        }
+
+        function fetchMafMetadataWith(documents, indexSource) {
+            if (documents && documents.length > 0) {
+                var requests =
+                    documents.map(function(document) {
+                        var criteria = {
+                            indexSource: indexSource,
+                            filters: [[{ 'term': { 'barcode.patient': document.patientBarcode.split('-')[2] } }]]
+                        };
+
+                        return searchService
+                                .search(criteria)
+                                .then(function(result) {
+                                    var resultDocument = {
+                                        document: document
+                                    };
+
+                                    if (result.hits.total > 0) {
+                                        resultDocument.metadata = result.hits.hits[0]._source;
+                                    }
+
+                                    return resultDocument;
+                                });
+                    });
+
+                return $q.all(requests);
+            }
+            else {
+                return $q.resolve;
+            }
         }
 
         function updatePagination(data) {
             if (data) {
-                var page             = searchViewModel.option.pagination.currentPage;
-                var pageSize         = searchViewModel.option.pagination.pageSize;
-                var pagedData        = data.slice((page - 1) * pageSize, page * pageSize);
+                var page      = searchViewModel.option.pagination.currentPage;
+                var pageSize  = searchViewModel.option.pagination.pageSize;
+                var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
 
                 searchViewModel.data = pagedData;
 
@@ -163,21 +258,21 @@
             }
         }
 
-        function filtersOf(indexSource) {
-            if (indexSource.indexName === 'xml') {
-                var optionFilter = searchViewModel.option.filter;
+        function filtersOf(viewModel, indexSource) {
+            if (indexSource.indexName === INDEX_SOURCE.xml.indexName) {
+                var viewModelFilters = viewModel.option.filter;
 
-                return Lazy(Object.keys(optionFilter))
+                return Lazy(Object.keys(viewModelFilters))
                     .filter(function(filter, index) {
-                        return (optionFilter[filter].value.length > 0 && optionFilter[filter].value !== 'All');
+                        return (viewModelFilters[filter].value.length > 0 && viewModelFilters[filter].value !== 'All');
                     })
                     .map(function(filter, index) {
                         var termFilter = {
                             term: {}
                         };
 
-                        Object.defineProperty(termFilter.term, optionFilter[filter].name, {
-                            value: optionFilter[filter].value.toUpperCase(),
+                        Object.defineProperty(termFilter.term, viewModelFilters[filter].name, {
+                            value: viewModelFilters[filter].value.toUpperCase(),
                             writable: true,
                             configurable: true,
                             enumerable: true
@@ -189,73 +284,6 @@
             }
 
             return [];
-        }
-
-        function fetchResults(indexSource, queryTerms, filters) {
-            var queryFilters            = null;
-            var pagination              = null;
-
-            searchViewModel.isSearching = false;
-
-            if (indexSource.indexName === 'xml') {
-                queryFilters = filtersOf(indexSource);
-                pagination = searchViewModel.option.pagination;
-            }
-            else {
-                if (filters) {
-                    queryFilters = filters;
-                }
-            }
-
-            return searchService
-                    .search(indexSource, queryTerms, queryFilters, pagination)
-                    .then(function(searchResults) {
-                        if (searchResults && searchResults.hits.hits.length > 0) {
-                            if (indexSource.indexName === INDEX_SOURCE.xml.indexName) {
-                                return searchResults.hits.hits.map(function(xmlResult) {
-                                    var patient  = (xmlResult._source.patient.bcr_patient_barcode.value).split('-')[2];
-                                    var filter   = [{ 'term': { 'barcode.patient': patient } }];
-
-                                    fetchResults(INDEX_SOURCE.maf, null, [filter])
-                                        .then(function(mafResult) {
-                                            if (mafResult && mafResult.length > 0) {
-                                                xmlResult.platform_maf = mafResult[0]._source.archiveName.platform;
-                                            }
-                                        });
-
-                                    return xmlResult;
-                                });
-                            }
-                            else {
-                                return searchResults.hits.hits;
-                            }
-                        }
-
-                        return [];
-                    })
-                    .then(function(documents) {
-                        var viewModelResults = searchViewModel.results[indexSource.indexName];
-
-                        if (documents) {
-                            // Set scope state
-                            viewModelResults.documentCount = documents.length;
-                            viewModelResults.documents = documents;
-                            searchViewModel.option.grid[indexSource.indexName].data = documents;
-
-                            // Update chart and pagination data
-                            // updateChartData(result.aggregations.values.buckets);
-                            if (indexSource.indexName === 'xml') {
-                                updatePagination(documents);
-                            }
-                        }
-                        else {
-                            searchViewModel.noResults = true;
-                        }
-
-                        searchViewModel.isSearching = false;
-
-                        return viewModelResults.documents;
-                    });
         }
 
         searchViewModel.search();

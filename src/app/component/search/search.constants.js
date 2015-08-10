@@ -13,7 +13,7 @@
                 termAggregationField: 'Hugo_Symbol',
                 suggestField: 'suggest_completion',
                 queryOf: function(query) {
-                    return { 'query':{ 'has_child': { 'type': 'content', 'query': query } } };
+                    return { 'query': { 'has_child': { 'type': 'content', 'query': query } } };
                 }
             },
             xml: {

@@ -6,11 +6,11 @@
         .factory('searchService', searchServiceFactory);
 
     /* @ngInject */
-    function searchServiceFactory($http, $q, log, esFactory, exception) {
+    function searchServiceFactory($http, $q, log, esFactory) {
         var client = esFactory({
-            host: 'tcga-d1-app9.nci.nih.gov:9200',
+            host: 'localhost:9200',
             apiVersion: '1.4',
-            log: 'trace'
+            log: 'info'
         });
 
         var searchService = {
@@ -21,9 +21,7 @@
         return searchService;
 
         function suggest(indexSource, searchText) {
-            var deferred = $q.defer();
-
-            client.suggest({
+            return client.suggest({
                     index: indexSource.indexName,
                     body: {
                         'suggestions': {
@@ -33,54 +31,43 @@
                     }
                 })
                 .then(function(response) {
-                    resolveOptions(deferred, response);
-                }, function(error) {
-                    deferred.reject(error.message);
-                    log.error(error.message);
+                    var options = [];
+
+                    if (response && response.suggestions) {
+                        response
+                            .suggestions[0]
+                            .options
+                            .map(function(option) {
+                                options.push(option.text);
+                            });
+                    }
+
+                    return options;
                 });
-
-            function resolveOptions(deferred, response) {
-                var options = [];
-
-                if ('undefined' !== typeof response && response.suggestions) {
-                    response
-                        .suggestions[0]
-                        .options
-                        .map(function(option) {
-                            options.push(option.text);
-                        });
-                }
-
-                deferred.resolve(options);
-            }
-
-            return deferred.promise;
         }
 
-        function search(indexSource, searchTerms, filters, pagination) {
-            var deferred = $q.defer();
+        function search(criteria) {
+            if (criteria && criteria.indexSource) {
+                var indexSource = criteria.indexSource;
 
-            var searchFields = {
-                index: indexSource.indexName,
-                type: indexSource.indexType,
-                body: buildSearchQuery(indexSource, searchTerms, filters)
-            };
+                var request     = {
+                    index: indexSource.indexName,
+                    type: indexSource.indexType,
+                    body: buildSearchQuery(indexSource, criteria.searchTerms, criteria.filters)
+                };
 
-            if (pagination) {
-                searchFields.from = ((pagination.currentPage - 1) * pagination.pageSize);
-                searchFields.size = pagination.pageSize;
+                if (criteria.pagination) {
+                    var pagination = criteria.pagination;
+
+                    request.from   = ((pagination.currentPage - 1) * pagination.pageSize);
+                    request.size   = pagination.pageSize;
+                }
+
+                return client.search(request);
             }
-
-            client
-                .search(searchFields)
-                .then(function(response) {
-                    deferred.resolve(response);
-                }, function(error) {
-                    deferred.reject(error.message);
-                    log.error(error.message);
-                });
-
-            return deferred.promise;
+            else {
+                return $q.resolve;
+            }
         }
 
         function buildSearchQuery(indexSource, searchTerms, filters) {

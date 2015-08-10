@@ -4,7 +4,7 @@
     var sharedConfig = angular.module('dataApp.shared.config');
 
     var environment = {
-        title: 'Data Dashboard',
+        title: 'Search Prototype',
         version: '1.0.0',
         errorPrefix: '[Data-Dashboard Error] '
     };

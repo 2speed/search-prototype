@@ -94,6 +94,7 @@ module.exports = (function BuildConfig() {
             'angular/angular.js',
             'json3/lib/json3.js',
             'es5-shim/es5-shim.js',
+            'bluebird/js/browser/bluebird.js',
             'lodash/dist/lodash.js',
             'angular-animate/angular-animate.js',
             'angular-cookies/angular-cookies.js',
