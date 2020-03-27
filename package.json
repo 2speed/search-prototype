@@ -42,7 +42,7 @@
     "gulp-util": ">=3.0",
     "jshint-stylish": "^2.0.1",
     "lazypipe": "^1.0.1",
-    "lodash": "~3.10.0",
+    "lodash": "~4.17.15",
     "main-bower-files": "^2.9.0",
     "material-design-icons": "^2.0.0",
     "merge-stream": "^0.1.8",
