@@ -1,0 +1,10 @@
+= search-prototype
+Matt Nicholls <transientvariable@gmail.com>
+:keywords: TCGA, Elasticsearch, Angular, Clinical, Cancer
+:sectanchors: true
+:source-highlighter: prettify
+:icons: font
+
+CAUTION: This code is VERY old and no longer maintained. It's only here for reference purposes.
+
+Front-end prototype for searching the contents of clinical (XML) and molecular (tabular) cancer data maintained in Elasticsearch by the The Cancer Genome Atlas (TCGA) Data Coordinating Center (DCC).
